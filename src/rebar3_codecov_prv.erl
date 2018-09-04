@@ -28,7 +28,7 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-    BuildDirectory = rebar_dir:profile_dir(State),
+    BuildDirectory = rebar_dir:base_dir(State),
     rebar_api:info("~nExporting cover data from ~p...~n", [BuildDirectory]),
     CoverDirectory = filename:join([BuildDirectory, "cover/*.coverdata"]),
     [InFile] = filelib:wildcard(CoverDirectory),
