@@ -78,17 +78,19 @@ format_array_to_list(Module, CallsPerLineArray, Acc) ->
     [{BinPath, ListOfCallTimes}|Acc].
 
 get_source_path(Module) when is_atom(Module) ->
-    try
-        AbsPath = proplists:get_value(source, Module:module_info(compile)),
-        [Prefix, Suffix] = string:split(AbsPath, "src/"),
-        filename:join("src", Suffix)
-    catch Error:Reason ->
-              Path = filename:join(["src/", atom_to_list(Module) ++ ".erl"]),
-              Issue = io_lib:format("Failed to calculate the source path of module ~p~n
-                                     falling back to ~s", [Module, Path]),
-              rebar_api:warn("~s~n~p~n~p~n~p~n", [Issue, Error, Reason, erlang:get_stacktrace()]),
-              Path
-    end.
+%%    try
+%%         AbsPath = proplists:get_value(source, Module:module_info(compile)),
+%%         [Prefix, Suffix] = string:split(AbsPath, "src/"),
+%%         filename:join("src", Suffix)
+        [P] = filelib:wildcard([filename:join(["src/**/",atom_to_list(Module)++".erl"])]),
+        P.
+%%     catch Error:Reason ->
+%%               Path = filename:join(["src/", atom_to_list(Module) ++ ".erl"]),
+%%               Issue = io_lib:format("Failed to calculate the source path of module ~p~n
+%%                                      falling back to ~s", [Module, Path]),
+%%               rebar_api:warn("~s~n~p~n~p~n~p~n", [Issue, Error, Reason, erlang:get_stacktrace()]),
+%%               Path
+%%     end.
 
 add_profile_ebin_path(App, State) ->
     ProfileDir = rebar_dir:profile_dir(rebar_state:opts(State), [default, test]),
