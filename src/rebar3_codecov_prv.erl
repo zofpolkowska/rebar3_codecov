@@ -10,6 +10,14 @@
 -define(DESC, "Converts .coverdata files to codecov compatible JSON").
 -define(OUT_FILE, "codecov.json").
 
+-ifdef(OTP_RELEASE). % only for OTP 21 or higher
+-define(EXCEPTION(Class, ExceptionPattern, Stacktrace), Class:ExceptionPattern:Stacktrace).
+-define(GET_STACKTRACE(Stacktrace), Stacktrace).
+-else.
+-define(EXCEPTION(Class, ExceptionPattern, _), Class:ExceptionPattern).
+-define(GET_STACKTRACE(_), erlang:get_stacktrace()).
+-endif.
+
 %% Public API
 -spec init(rebar_state:t()) -> {ok, rebar_state:t()}.
 init(State) ->
@@ -58,8 +66,8 @@ analyze(Files) ->
         Modules = cover:imported_modules(),
         {result, Result, _} = cover:analyse(Modules, calls, line),
         Result
-    catch Error:Reason ->
-              rebar_api:abort("~p~n~p~n~p~n",[Error, Reason, erlang:get_stacktrace()])
+    catch ?EXCEPTION(Error, Reason, Stacktrace) ->
+              rebar_api:abort("~p~n~p~n~p~n",[Error, Reason, ?GET_STACKTRACE(Stacktrace)])
     end.
 
 to_json(Data) ->
@@ -85,10 +93,10 @@ get_source_path(Module) when is_atom(Module) ->
              rebar_api:warn("~s~n", [Issue]),
              []
     catch
-        Error:Reason ->
+        ?EXCEPTION(Error, Reason, Stacktrace) ->
             Issue = io_lib:format("Failed to calculate the source path of module ~p~n
                                      falling back to ~s", [Module, Name]),
-            rebar_api:warn("~s~n~p~n~p~n~p~n", [Issue, Error, Reason, erlang:get_stacktrace()]),
+            rebar_api:warn("~s~n~p~n~p~n~p~n", [Issue, Error, Reason, ?GET_STACKTRACE(Stacktrace)]),
             Name
     end.
 
