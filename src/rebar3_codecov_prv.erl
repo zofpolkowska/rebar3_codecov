@@ -2,6 +2,7 @@
 
 %% API
 -export([init/1, do/1, format_error/1]).
+-ignore_xref([do/1, format_error/1]).
 
 -define(NAMESPACE, codecov).
 -define(PROVIDER, analyze).
