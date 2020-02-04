@@ -1,5 +1,4 @@
 -module(rebar3_codecov_prv).
--behaviour(provider).
 
 %% API
 -export([init/1, do/1, format_error/1]).
