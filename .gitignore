@@ -16,3 +16,4 @@ erl_crash.dump
 log
 logs
 rel/example_project
+rebar.lock
