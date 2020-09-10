@@ -10,7 +10,6 @@
   {env,[]},
   {modules, []},
 
-  {maintainers, ["Zofia Polkowska"]},
-  {licenses, []},
+  {licenses, ["BSD License 2.0"]},
   {links, [{"Github", "https://github.com/zofpolkowska/rebar3_codecov"}]}
  ]}.
